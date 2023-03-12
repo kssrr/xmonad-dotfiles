@@ -1,0 +1,34 @@
+URxvt.font: xft:Fira Mono:Medium:size=18
+URxvt.scrollBar:false
+URxvt.geometry: 80x-1
+urxvt.perl-ext-common: resize-font, selection-to-clipboard
+
+*.foreground:    #303338
+*.background:    #FFF7ED
+*.cursorColor:   #303338
+*.highlightColor:#3E4044
+
+! Black and Grey
+*.color0:        #303338
+*.color8:        #3E4044
+! Red
+*.color1:        #CB7495
+*.color9:        #CB7495
+! Green
+*.color2:        #46A473
+*.color10:       #46A473
+! Yellow
+*.color3:        #A38F2D
+*.color11:       #A38F2D
+! Blue
+*.color4:        #7E87D6
+*.color12:       #7E87D6
+! Magenta
+*.color5:        #BD72A8
+*.color13:       #BD72A8
+! Cyan
+*.color6:        #00A0BE
+*.color14:       #00A0BE
+! White
+*.color7:        #F2E6D4
+*.color15:       #FFFDFB
