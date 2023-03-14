@@ -1,8 +1,8 @@
 $ ghc --make xmonad.hs -i -ilib -fforce-recomp -main-is main -v0 -outputdir /home/kssrr/.xmonad/build-x86_64-linux -o /home/kssrr/.xmonad/xmonad-x86_64-linux
 
-xmonad.hs:41:15: warning: [-Wtabs]
+xmonad.hs:42:15: warning: [-Wtabs]
     Tab character found here, and in two further locations.
     Please use spaces instead.
    |
-41 |     , ((modm,               xK_r     ), spawn "rofi -show drun")
+42 |       ((modm,               xK_r     ), spawn "rofi -show drun"),
    |               ^^

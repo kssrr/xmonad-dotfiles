@@ -1,20 +1,14 @@
 -- xmonad.hs
 
--- Imports:
-
--- Base
 import XMonad
 import Data.Monoid
 import System.Exit
 import Graphics.X11.ExtraTypes.XF86
 
--- Layouts
 import XMonad.Layout.NoBorders 
 
--- Utils
 import XMonad.Util.SpawnOnce
 
--- Hooks
 import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.EwmhDesktops
 import XMonad.Hooks.WindowSwallowing
@@ -31,8 +25,11 @@ myClickJustFocuses :: Bool
 myClickJustFocuses = False
 
 myBorderWidth   = 3
+
 myModMask       = mod4Mask
+
 myWorkspaces    = ["1","2","3","4","5","6","7","8","9"]
+
 myNormalBorderColor  = "#dddddd"
 myFocusedBorderColor = "#3579a8"
 
@@ -84,29 +81,61 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
 
 -- Mouse bindings:
 myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
-    -- mod-button1, Set the window to floating mode and move by dragging:
+
+    -- mod-button1, Set the window to floating mode and move by dragging
     [ ((modm, button1), (\w -> focus w >> mouseMoveWindow w
                                        >> windows W.shiftMaster)),
-    -- mod-button2, Raise the window to the top of the stack:
+
+    -- mod-button2, Raise the window to the top of the stack
       ((modm, button2), (\w -> focus w >> windows W.shiftMaster)),
-    -- mod-button3, Set the window to floating mode and resize by dragging:
+
+    -- mod-button3, Set the window to floating mode and resize by dragging
       ((modm, button3), (\w -> focus w >> mouseResizeWindow w
                                        >> windows W.shiftMaster))
+
+    -- you may also bind events to the mouse scroll wheel (button4 and button5)
     ]
 
+------------------------------------------------------------------------
 -- Layouts:
+
+-- You can specify and transform your layouts by modifying these values.
+-- If you change layout bindings be sure to use 'mod-shift-space' after
+-- restarting (with 'mod-q') to reset your layout state to the new
+-- defaults, as xmonad preserves your old layout settings by default.
+--
+-- The available layouts.  Note that each layout is separated by |||,
+-- which denotes layout choice.
+--
 myLayout = tiled ||| Mirror tiled ||| noBorders Full
   where
      -- default tiling algorithm partitions the screen into two panes
      tiled   = Tall nmaster delta ratio
+
      -- The default number of windows in the master pane
      nmaster = 1
+
      -- Default proportion of screen occupied by master pane
      ratio   = 1/2
+
      -- Percent of screen to increment by when resizing panes
      delta   = 3/100
 
+------------------------------------------------------------------------
 -- Window rules:
+
+-- Execute arbitrary actions and WindowSet manipulations when managing
+-- a new window. You can use this to, for example, always float a
+-- particular program, or have a client always appear on a particular
+-- workspace.
+--
+-- To find the property name associated with a program, use
+-- > xprop | grep WM_CLASS
+-- and click on the client you're interested in.
+--
+-- To match on the WM_NAME, you can use 'title' in the same way that
+-- 'className' and 'resource' are used below.
+--
 myManageHook = composeAll
     [ className =? "MPlayer"        --> doFloat,
       className =? "Gimp"           --> doFloat,
@@ -115,17 +144,38 @@ myManageHook = composeAll
       resource  =? "desktop_window" --> doIgnore,
       resource  =? "kdesktop"       --> doIgnore ]
 
+------------------------------------------------------------------------
 -- Event handling
+
+-- * EwmhDesktops users should change this to ewmhDesktopsEventHook
+--
+-- Defines a custom handler function for X Events. The function should
+-- return (All True) if the default handler is to be run afterwards. To
+-- combine event hooks use mappend or mconcat from Data.Monoid.
+--
 myEventHook = swallowEventHook (className =? "URxvt") (return True)
 
+------------------------------------------------------------------------
 -- Status bars and logging
+
+-- Perform an arbitrary action on each internal state change or X event.
+-- See the 'XMonad.Hooks.DynamicLog' extension for examples.
+--
 myLogHook = return ()
 
+------------------------------------------------------------------------
 -- Startup hook
+
+-- Perform an arbitrary action each time xmonad starts or is restarted
+-- with mod-q.  Used by, e.g., XMonad.Layout.PerWorkspace to initialize
+-- per-workspace layout choices.
+--
+-- By default, do nothing.
 myStartupHook :: X()
 myStartupHook = do
 	spawnOnce "nitrogen --restore &"
 
+------------------------------------------------------------------------
 -- Command to launch the bar.
 myBar = "xmobar"
 
@@ -143,18 +193,24 @@ myLayoutPrinter x = x
 -- Key binding to toggle the gap for the bar.
 toggleStrutsKey XConfig {XMonad.modMask = modMask} = (modMask, xK_b)
 
+------------------------------------------------------------------------
+-- Now run xmonad with all the defaults we set up.
 
--- Main
+-- Run xmonad with the settings you specify. No need to modify this.
+--
 main :: IO()
+-- main = xmonad =<< statusBar myBar myPP toggleStrutsKey defaults
 main = xmonad .
        ewmhFullscreen .
        ewmh =<<
        statusBar myBar myPP toggleStrutsKey defaults
 
--- alternatively:
--- main = xmonad =<< statusBar myBar myPP toggleStrutsKey defaults
-
--- defaults
+-- A structure containing your configuration settings, overriding
+-- fields in the default config. Any you don't override, will
+-- use the defaults defined in xmonad/XMonad/Config.hs
+--
+-- No need to modify this.
+--
 defaults = def {
       -- simple stuff
         terminal           = myTerminal,
@@ -178,19 +234,22 @@ defaults = def {
         startupHook        = myStartupHook
 }
 
--- Help strings:
+-- | Finally, a copy of the default bindings in simple textual tabular format.
 help :: String
-help = unlines ["The default modifier key is 'super' (Windows-key). Default keybindings:",
+help = unlines ["The default modifier key is 'alt'. Default keybindings:",
     "",
     "-- launching and killing programs",
-    "mod-Shift-Enter  Launch urxvt",
-    "mod-r            Launch rofi",
+    "mod-Shift-Enter  Launch xterminal",
+    "mod-p            Launch dmenu",
+    "mod-Shift-p      Launch gmrun",
     "mod-Shift-c      Close/kill the focused window",
     "mod-Space        Rotate through the available layout algorithms",
     "mod-Shift-Space  Reset the layouts on the current workSpace to default",
+    "mod-n            Resize/refresh viewed windows to the correct size",
     "",
     "-- move focus up or down the window stack",
     "mod-Tab        Move focus to the next window",
+    "mod-Shift-Tab  Move focus to the previous window",
     "mod-j          Move focus to the next window",
     "mod-k          Move focus to the previous window",
     "mod-m          Move focus to the master window",
@@ -218,8 +277,8 @@ help = unlines ["The default modifier key is 'super' (Windows-key). Default keyb
     "",
     "-- Workspaces & screens",
     "mod-Shift-[1..9]   Move client to workspace N",
-    "mod-{w,e,p}        Switch to physical/Xinerama screens 1, 2, or 3",
-    "mod-Shift-{w,e,p}  Move client to screen 1, 2, or 3",
+    "mod-{w,e,r}        Switch to physical/Xinerama screens 1, 2, or 3",
+    "mod-Shift-{w,e,r}  Move client to screen 1, 2, or 3",
     "",
     "-- Mouse bindings: default actions bound to mouse events",
     "mod-button1  Set the window to floating mode and move by dragging",
